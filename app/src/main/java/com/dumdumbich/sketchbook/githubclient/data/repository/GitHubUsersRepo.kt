@@ -2,6 +2,7 @@ package com.dumdumbich.sketchbook.githubclient.data.repository
 
 import com.dumdumbich.sketchbook.githubclient.domain.entity.GitHubUser
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class GitHubUsersRepo {
 
@@ -16,5 +17,6 @@ class GitHubUsersRepo {
     )
 
     fun getUsers(): Observable<List<GitHubUser>> = Observable.just(users)
+        .subscribeOn(Schedulers.io())
 
 }

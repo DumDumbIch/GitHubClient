@@ -6,12 +6,15 @@ import com.dumdumbich.sketchbook.githubclient.ui.navigator.IScreens
 import com.dumdumbich.sketchbook.githubclient.ui.pages.users.list.IUserItemView
 import com.dumdumbich.sketchbook.githubclient.ui.pages.users.list.IUsersListPresenter
 import com.github.terrakok.cicerone.Router
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import moxy.MvpPresenter
 
 class UsersPresenter(
     private val usersRepo: GitHubUsersRepo,
     private val router: Router,
-    private val screens: IScreens
+    private val screens: IScreens,
+    private val uiScheduler: Scheduler
 ) : MvpPresenter<IUsersView>() {
 
     class UsersListPresenter : IUsersListPresenter {
@@ -29,6 +32,7 @@ class UsersPresenter(
 
     }
 
+    private val compositeDisposable = CompositeDisposable()
     val usersListPresenter = UsersListPresenter()
 
     override fun onFirstViewAttach() {
@@ -43,19 +47,28 @@ class UsersPresenter(
 
     private fun loadData() {
         usersListPresenter.users.clear()
-        usersRepo.getUsers().subscribe(
-            { user ->
-                usersListPresenter.users.addAll(user)
-            },
-            { error ->
-                error.printStackTrace()
-            }
-        )
-        viewState.updateList()
+        val disposable = usersRepo.getUsers()
+            .observeOn(uiScheduler)
+            .subscribe(
+                { user ->
+                    usersListPresenter.users.addAll(user)
+                    viewState.updateList()
+                },
+                { error ->
+                    error.printStackTrace()
+                }
+            )
+        compositeDisposable.add(disposable)
     }
 
     fun backClick(): Boolean {
         router.exit()
         return true
     }
+
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
+    }
+
 }

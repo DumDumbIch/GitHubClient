@@ -10,6 +10,7 @@ import com.dumdumbich.sketchbook.githubclient.ui.App
 import com.dumdumbich.sketchbook.githubclient.ui.navigator.AndroidScreens
 import com.dumdumbich.sketchbook.githubclient.ui.navigator.IBackClickListener
 import com.dumdumbich.sketchbook.githubclient.ui.pages.users.list.UsersRVAdapter
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
@@ -20,7 +21,12 @@ class UsersFragment : MvpAppCompatFragment(), IUsersView, IBackClickListener {
     }
 
     private val presenter by moxyPresenter {
-        UsersPresenter(GitHubUsersRepo(), App.instance.router, AndroidScreens())
+        UsersPresenter(
+            GitHubUsersRepo(),
+            App.instance.router,
+            AndroidScreens(),
+            AndroidSchedulers.mainThread()
+        )
     }
 
     private var ui: FragmentUsersBinding? = null
