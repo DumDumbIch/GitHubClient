@@ -1,6 +1,6 @@
 package com.dumdumbich.sketchbook.githubclient.ui.pages.users
 
-import com.dumdumbich.sketchbook.githubclient.data.repository.GitHubUsersRepo
+import com.dumdumbich.sketchbook.githubclient.data.repository.IGitHubUsersRepo
 import com.dumdumbich.sketchbook.githubclient.domain.entity.GitHubUser
 import com.dumdumbich.sketchbook.githubclient.ui.navigator.IScreens
 import com.dumdumbich.sketchbook.githubclient.ui.pages.users.list.IUserItemView
@@ -11,7 +11,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import moxy.MvpPresenter
 
 class UsersPresenter(
-    private val usersRepo: GitHubUsersRepo,
+    private val usersRepo: IGitHubUsersRepo,
     private val router: Router,
     private val screens: IScreens,
     private val uiScheduler: Scheduler

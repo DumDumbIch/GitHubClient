@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.dumdumbich.sketchbook.githubclient.data.api.ApiHolder
 import com.dumdumbich.sketchbook.githubclient.data.repository.GitHubUsersRepo
 import com.dumdumbich.sketchbook.githubclient.databinding.FragmentUsersBinding
 import com.dumdumbich.sketchbook.githubclient.ui.App
@@ -22,7 +23,7 @@ class UsersFragment : MvpAppCompatFragment(), IUsersView, IBackClickListener {
 
     private val presenter by moxyPresenter {
         UsersPresenter(
-            GitHubUsersRepo(),
+            GitHubUsersRepo(ApiHolder.api),
             App.instance.router,
             AndroidScreens(),
             AndroidSchedulers.mainThread()
