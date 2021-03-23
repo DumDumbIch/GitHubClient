@@ -8,6 +8,7 @@ import com.dumdumbich.sketchbook.githubclient.data.api.ApiHolder
 import com.dumdumbich.sketchbook.githubclient.data.repository.GitHubUsersRepo
 import com.dumdumbich.sketchbook.githubclient.databinding.FragmentUsersBinding
 import com.dumdumbich.sketchbook.githubclient.ui.App
+import com.dumdumbich.sketchbook.githubclient.data.image.ImageLoader
 import com.dumdumbich.sketchbook.githubclient.ui.navigator.AndroidScreens
 import com.dumdumbich.sketchbook.githubclient.ui.navigator.IBackClickListener
 import com.dumdumbich.sketchbook.githubclient.ui.pages.users.list.UsersRVAdapter
@@ -48,7 +49,7 @@ class UsersFragment : MvpAppCompatFragment(), IUsersView, IBackClickListener {
 
     override fun init() {
         ui?.rvUsers?.layoutManager = LinearLayoutManager(requireContext())
-        adapter = UsersRVAdapter(presenter.usersListPresenter)
+        adapter = UsersRVAdapter(presenter.usersListPresenter, ImageLoader())
         ui?.rvUsers?.adapter = adapter
     }
 
