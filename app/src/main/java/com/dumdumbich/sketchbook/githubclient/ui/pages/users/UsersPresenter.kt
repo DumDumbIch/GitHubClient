@@ -42,7 +42,8 @@ class UsersPresenter(
         loadData()
         usersListPresenter.itemClickListener = { view ->
             val user = usersListPresenter.users[view.pos]
-            router.navigateTo(screens.user(user))
+//            router.navigateTo(screens.user(user))
+            router.navigateTo(screens.repositories(user))
         }
     }
 
