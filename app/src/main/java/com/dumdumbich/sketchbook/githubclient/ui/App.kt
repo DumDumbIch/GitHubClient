@@ -1,6 +1,7 @@
 package com.dumdumbich.sketchbook.githubclient.ui
 
 import android.app.Application
+import com.dumdumbich.sketchbook.githubclient.data.db.room.Database
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Router
 
@@ -20,6 +21,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        Database.create(this)
     }
 
 }
