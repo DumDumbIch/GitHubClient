@@ -1,8 +1,8 @@
 package com.dumdumbich.sketchbook.githubclient.ui.pages.repositories
 
-import com.dumdumbich.sketchbook.githubclient.data.repository.IGitHubUsersRepo
 import com.dumdumbich.sketchbook.githubclient.domain.entity.GitHubRepository
 import com.dumdumbich.sketchbook.githubclient.domain.entity.GitHubUser
+import com.dumdumbich.sketchbook.githubclient.domain.interactor.IGitHubRepositoriesInteractor
 import com.dumdumbich.sketchbook.githubclient.ui.navigator.IScreens
 import com.dumdumbich.sketchbook.githubclient.ui.pages.repositories.list.IRepositoriesListPresenter
 import com.dumdumbich.sketchbook.githubclient.ui.pages.repositories.list.IRepositoryItemView
@@ -12,7 +12,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import moxy.MvpPresenter
 
 class RepositoriesPresenter(
-    private val usersRepo: IGitHubUsersRepo,
+    private val interactor: IGitHubRepositoriesInteractor,
     private val router: Router,
     private val screens: IScreens,
     private val uiScheduler: Scheduler,
@@ -22,12 +22,11 @@ class RepositoriesPresenter(
     class RepositoriesListPresenter : IRepositoriesListPresenter {
 
         val repositories = mutableListOf<GitHubRepository>()
-
         override var itemClickListener: ((IRepositoryItemView) -> Unit)? = null
 
         override fun bindView(view: IRepositoryItemView) {
             val repository = repositories[view.pos]
-            view.setName(repository.name)
+            repository.name.let { view.setName(it) }
         }
 
         override fun getCount() = repositories.size
@@ -41,17 +40,17 @@ class RepositoriesPresenter(
         viewState.init()
         loadData()
         repositoriesListPresenter.itemClickListener = { view ->
-//            val repository = repositoriesListPresenter.repositories[view.pos]
-            router.navigateTo(screens.users())
+            val repository = repositoriesListPresenter.repositories[view.pos]
+            router.navigateTo(screens.repository(repository))
         }
     }
 
     private fun loadData() {
-        repositoriesListPresenter.repositories.clear()
-        val disposable = usersRepo.getUserRepositories(user)
+        val disposable = interactor.getRepositories(user)
             .observeOn(uiScheduler)
             .subscribe(
                 { repository ->
+                    repositoriesListPresenter.repositories.clear()
                     repositoriesListPresenter.repositories.addAll(repository)
                     viewState.updateList()
                 },
