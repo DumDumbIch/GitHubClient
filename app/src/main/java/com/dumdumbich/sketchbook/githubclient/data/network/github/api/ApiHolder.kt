@@ -1,4 +1,4 @@
-package com.dumdumbich.sketchbook.githubclient.data.api
+package com.dumdumbich.sketchbook.githubclient.data.network.github.api
 
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
