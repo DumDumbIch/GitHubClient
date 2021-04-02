@@ -1,4 +1,4 @@
-package com.dumdumbich.sketchbook.githubclient.data.image
+package com.dumdumbich.sketchbook.githubclient.data.resource.image
 
 import android.widget.ImageView
 import com.bumptech.glide.Glide

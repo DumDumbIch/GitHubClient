@@ -7,15 +7,12 @@ import com.dumdumbich.sketchbook.githubclient.databinding.FragmentRepositoriesIt
 
 class RepositoriesRVAdapter(
     private val presenter: IRepositoriesListPresenter
-) : RecyclerView.Adapter<RepositoriesRVAdapter.ViewHolder>()
-{
+) : RecyclerView.Adapter<RepositoriesRVAdapter.ViewHolder>() {
 
 
     inner class ViewHolder(
-        private val ui: FragmentRepositoriesItemBinding,
-
-        ) :
-        RecyclerView.ViewHolder(ui.root), IRepositoryItemView {
+        private val ui: FragmentRepositoriesItemBinding
+    ) : RecyclerView.ViewHolder(ui.root), IRepositoryItemView {
 
         override var pos: Int = -1
 
@@ -33,8 +30,8 @@ class RepositoriesRVAdapter(
             )
         )
             .apply {
-            itemView.setOnClickListener { presenter.itemClickListener?.invoke(this) }
-        }
+                itemView.setOnClickListener { presenter.itemClickListener?.invoke(this) }
+            }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) =
         presenter.bindView(holder.apply { pos = position })

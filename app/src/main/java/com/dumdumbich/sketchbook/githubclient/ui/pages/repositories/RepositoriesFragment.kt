@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.dumdumbich.sketchbook.githubclient.data.api.ApiHolder
-import com.dumdumbich.sketchbook.githubclient.data.repository.GitHubUsersRepo
+import com.dumdumbich.sketchbook.githubclient.data.db.room.Database
+import com.dumdumbich.sketchbook.githubclient.data.network.github.api.ApiHolder
+import com.dumdumbich.sketchbook.githubclient.data.network.service.NetworkStatus
+import com.dumdumbich.sketchbook.githubclient.data.repository.GitHubRepositories
 import com.dumdumbich.sketchbook.githubclient.databinding.FragmentRepositoriesBinding
 import com.dumdumbich.sketchbook.githubclient.domain.entity.GitHubUser
 import com.dumdumbich.sketchbook.githubclient.ui.App
@@ -31,7 +33,11 @@ class RepositoriesFragment : MvpAppCompatFragment(), IRepositoriesView, IBackCli
     private val presenter by moxyPresenter {
         val user = arguments?.getParcelable<GitHubUser>(USER_ARG) as GitHubUser
         RepositoriesPresenter(
-            GitHubUsersRepo(ApiHolder.api),
+            GitHubRepositories(
+                ApiHolder.api,
+                NetworkStatus(App.instance),
+                Database.getInstance()
+            ),
             App.instance.router,
             AndroidScreens(),
             AndroidSchedulers.mainThread(),
@@ -56,7 +62,7 @@ class RepositoriesFragment : MvpAppCompatFragment(), IRepositoriesView, IBackCli
     }
 
     override fun init() {
-        ui?.rvRepositories?.layoutManager = LinearLayoutManager(requireContext())
+        ui?.rvRepositories?.layoutManager = LinearLayoutManager(context)
         adapter = RepositoriesRVAdapter(presenter.repositoriesListPresenter)
         ui?.rvRepositories?.adapter = adapter
     }
@@ -66,4 +72,5 @@ class RepositoriesFragment : MvpAppCompatFragment(), IRepositoriesView, IBackCli
     }
 
     override fun isBackPressed() = presenter.backClick()
+
 }

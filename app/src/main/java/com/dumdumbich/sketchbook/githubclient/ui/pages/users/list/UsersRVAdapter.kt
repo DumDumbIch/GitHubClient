@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.dumdumbich.sketchbook.githubclient.databinding.FragmentUsersItemBinding
-import com.dumdumbich.sketchbook.githubclient.data.image.IImageLoader
+import com.dumdumbich.sketchbook.githubclient.data.resource.image.IImageLoader
 
 class UsersRVAdapter(
     private val presenter: IUsersListPresenter,
