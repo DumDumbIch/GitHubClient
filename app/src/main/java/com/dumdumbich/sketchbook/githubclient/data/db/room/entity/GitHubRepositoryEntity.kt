@@ -15,6 +15,6 @@ import androidx.room.PrimaryKey
 data class GitHubRepositoryEntity(
     @PrimaryKey val id: String,
     val name: String,
-    val forksCount: String,
+    val forksCount: Int,
     var userId: String
 )
