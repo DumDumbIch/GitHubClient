@@ -2,7 +2,7 @@ package com.dumdumbich.sketchbook.githubclient.data.repository
 
 import android.util.Log
 import com.dumdumbich.sketchbook.githubclient.data.db.cache.IGitHubUsersCache
-import com.dumdumbich.sketchbook.githubclient.data.network.github.api.IDataSource
+import com.dumdumbich.sketchbook.githubclient.data.network.api.github.retrofit.IGitHubAPI
 import com.dumdumbich.sketchbook.githubclient.data.network.service.INetworkStatus
 import com.dumdumbich.sketchbook.githubclient.domain.entity.GitHubUser
 import com.dumdumbich.sketchbook.githubclient.domain.interactor.IGitHubUsersInteractor
@@ -10,7 +10,7 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class GitHubUsers(
-    private val api: IDataSource,
+    private val api: IGitHubAPI,
     private val networkStatus: INetworkStatus,
     private val cache: IGitHubUsersCache
 ) : IGitHubUsersInteractor {

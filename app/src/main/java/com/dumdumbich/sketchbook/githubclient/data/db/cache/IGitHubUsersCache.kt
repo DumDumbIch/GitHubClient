@@ -7,5 +7,4 @@ import io.reactivex.rxjava3.core.Single
 interface IGitHubUsersCache {
     fun getUsers(): Single<List<GitHubUser>>
     fun putUsers(users: List<GitHubUser>) : Completable
-
 }

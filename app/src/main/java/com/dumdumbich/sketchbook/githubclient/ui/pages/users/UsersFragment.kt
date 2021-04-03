@@ -7,12 +7,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dumdumbich.sketchbook.githubclient.data.db.room.Database
 import com.dumdumbich.sketchbook.githubclient.data.db.room.cache.GitHubUsersCache
-import com.dumdumbich.sketchbook.githubclient.data.network.github.api.ApiHolder
+import com.dumdumbich.sketchbook.githubclient.data.db.room.cache.ImagesCache
+import com.dumdumbich.sketchbook.githubclient.data.network.api.github.ApiHolder
 import com.dumdumbich.sketchbook.githubclient.data.network.service.NetworkStatus
 import com.dumdumbich.sketchbook.githubclient.data.repository.GitHubUsers
 import com.dumdumbich.sketchbook.githubclient.databinding.FragmentUsersBinding
 import com.dumdumbich.sketchbook.githubclient.ui.App
-import com.dumdumbich.sketchbook.githubclient.data.resource.image.ImageLoader
+import com.dumdumbich.sketchbook.githubclient.data.resource.image.glide.ImageLoader
 import com.dumdumbich.sketchbook.githubclient.ui.navigator.AndroidScreens
 import com.dumdumbich.sketchbook.githubclient.ui.navigator.IBackClickListener
 import com.dumdumbich.sketchbook.githubclient.ui.pages.users.list.UsersRVAdapter
@@ -60,7 +61,16 @@ class UsersFragment : MvpAppCompatFragment(), IUsersView, IBackClickListener {
     override fun init() {
         Log.d("GITHUB_CLIENT", "UsersFragment(): init()")
         ui?.rvUsers?.layoutManager = LinearLayoutManager(context)
-        adapter = UsersRVAdapter(presenter.usersListPresenter, ImageLoader())
+        adapter = UsersRVAdapter(
+            presenter.usersListPresenter,
+            ImageLoader(
+                ImagesCache(
+                    Database.getInstance(),
+                    App.instance.cacheDir
+                ),
+                NetworkStatus(requireContext())
+            )
+        )
         ui?.rvUsers?.adapter = adapter
     }
 

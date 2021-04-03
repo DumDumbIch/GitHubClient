@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dumdumbich.sketchbook.githubclient.data.db.room.Database
 import com.dumdumbich.sketchbook.githubclient.data.db.room.cache.GitHubRepositoriesCache
-import com.dumdumbich.sketchbook.githubclient.data.network.github.api.ApiHolder
+import com.dumdumbich.sketchbook.githubclient.data.network.api.github.ApiHolder
 import com.dumdumbich.sketchbook.githubclient.data.network.service.NetworkStatus
 import com.dumdumbich.sketchbook.githubclient.data.repository.GitHubRepositories
 import com.dumdumbich.sketchbook.githubclient.databinding.FragmentRepositoriesBinding
