@@ -1,10 +1,12 @@
 package com.dumdumbich.sketchbook.githubclient.ui.pages.repositories
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dumdumbich.sketchbook.githubclient.data.db.room.Database
+import com.dumdumbich.sketchbook.githubclient.data.db.room.cache.GitHubRepositoriesCache
 import com.dumdumbich.sketchbook.githubclient.data.network.github.api.ApiHolder
 import com.dumdumbich.sketchbook.githubclient.data.network.service.NetworkStatus
 import com.dumdumbich.sketchbook.githubclient.data.repository.GitHubRepositories
@@ -36,7 +38,7 @@ class RepositoriesFragment : MvpAppCompatFragment(), IRepositoriesView, IBackCli
             GitHubRepositories(
                 ApiHolder.api,
                 NetworkStatus(App.instance),
-                Database.getInstance()
+                GitHubRepositoriesCache(Database.getInstance())
             ),
             App.instance.router,
             AndroidScreens(),
@@ -54,20 +56,24 @@ class RepositoriesFragment : MvpAppCompatFragment(), IRepositoriesView, IBackCli
         savedInstanceState: Bundle?
     ) = FragmentRepositoriesBinding.inflate(inflater, container, false).also {
         ui = it
+        Log.d("GITHUB_CLIENT", "RepositoriesFragment(): onCreateView()")
     }.root
 
     override fun onDestroyView() {
+        Log.d("GITHUB_CLIENT", "RepositoriesFragment(): onDestroyView()")
         super.onDestroyView()
         ui = null
     }
 
     override fun init() {
+        Log.d("GITHUB_CLIENT", "RepositoriesFragment(): init()")
         ui?.rvRepositories?.layoutManager = LinearLayoutManager(context)
         adapter = RepositoriesRVAdapter(presenter.repositoriesListPresenter)
         ui?.rvRepositories?.adapter = adapter
     }
 
     override fun updateList() {
+        Log.d("GITHUB_CLIENT", "RepositoriesFragment(): updateList()")
         adapter?.notifyDataSetChanged()
     }
 

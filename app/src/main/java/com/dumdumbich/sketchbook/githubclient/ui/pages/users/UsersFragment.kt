@@ -1,10 +1,12 @@
 package com.dumdumbich.sketchbook.githubclient.ui.pages.users
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dumdumbich.sketchbook.githubclient.data.db.room.Database
+import com.dumdumbich.sketchbook.githubclient.data.db.room.cache.GitHubUsersCache
 import com.dumdumbich.sketchbook.githubclient.data.network.github.api.ApiHolder
 import com.dumdumbich.sketchbook.githubclient.data.network.service.NetworkStatus
 import com.dumdumbich.sketchbook.githubclient.data.repository.GitHubUsers
@@ -29,7 +31,7 @@ class UsersFragment : MvpAppCompatFragment(), IUsersView, IBackClickListener {
             GitHubUsers(
                 ApiHolder.api,
                 NetworkStatus(App.instance),
-                Database.getInstance()
+                GitHubUsersCache(Database.getInstance())
             ),
             App.instance.router,
             AndroidScreens(),
@@ -46,20 +48,24 @@ class UsersFragment : MvpAppCompatFragment(), IUsersView, IBackClickListener {
         savedInstanceState: Bundle?
     ) = FragmentUsersBinding.inflate(inflater, container, false).also {
         ui = it
+        Log.d("GITHUB_CLIENT", "UsersFragment(): onCreateView()")
     }.root
 
     override fun onDestroyView() {
+        Log.d("GITHUB_CLIENT", "UsersFragment(): onDestroyView()")
         super.onDestroyView()
         ui = null
     }
 
     override fun init() {
-        ui?.rvUsers?.layoutManager = LinearLayoutManager(requireContext())
+        Log.d("GITHUB_CLIENT", "UsersFragment(): init()")
+        ui?.rvUsers?.layoutManager = LinearLayoutManager(context)
         adapter = UsersRVAdapter(presenter.usersListPresenter, ImageLoader())
         ui?.rvUsers?.adapter = adapter
     }
 
     override fun updateList() {
+        Log.d("GITHUB_CLIENT", "UsersFragment(): updateList()")
         adapter?.notifyDataSetChanged()
     }
 
