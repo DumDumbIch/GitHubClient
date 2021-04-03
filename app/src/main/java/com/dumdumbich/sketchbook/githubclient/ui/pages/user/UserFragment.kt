@@ -11,7 +11,6 @@ import com.dumdumbich.sketchbook.githubclient.ui.navigator.IBackClickListener
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
-
 class UserFragment : MvpAppCompatFragment(), IUserView,
     IBackClickListener {
 
@@ -27,7 +26,9 @@ class UserFragment : MvpAppCompatFragment(), IUserView,
 
     private val presenter by moxyPresenter {
         val user = arguments?.getParcelable<GitHubUser>(USER_ARG) as GitHubUser
-        UserPresenter(App.instance.router, user)
+        UserPresenter(user).apply {
+            App.instance.appComponent.inject(this)
+        }
     }
 
     private var ui: FragmentUserBinding? = null

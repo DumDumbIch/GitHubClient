@@ -6,12 +6,13 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.dumdumbich.sketchbook.githubclient.databinding.FragmentUsersItemBinding
 import com.dumdumbich.sketchbook.githubclient.data.resource.image.IImageLoader
+import javax.inject.Inject
 
-class UsersRVAdapter(
-    private val presenter: IUsersListPresenter,
-    val imageLoader: IImageLoader<ImageView>
-) :
+class UsersRVAdapter(private val presenter: IUsersListPresenter) :
     RecyclerView.Adapter<UsersRVAdapter.ViewHolder>() {
+
+    @Inject
+    lateinit var imageLoader: IImageLoader<ImageView>
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
         ViewHolder(
@@ -40,7 +41,7 @@ class UsersRVAdapter(
             tvLogin.text = text
         }
 
-        override fun loadAvatar(url: String)  = with(ui) {
+        override fun loadAvatar(url: String) = with(ui) {
             imageLoader.load(url, ivAvatar)
         }
     }

@@ -3,8 +3,9 @@ package com.dumdumbich.sketchbook.githubclient.ui
 import android.app.Application
 import android.util.Log
 import com.dumdumbich.sketchbook.githubclient.data.db.room.Database
-import com.github.terrakok.cicerone.Cicerone
-import com.github.terrakok.cicerone.Router
+import com.dumdumbich.sketchbook.githubclient.di.component.AppComponent
+import com.dumdumbich.sketchbook.githubclient.di.component.DaggerAppComponent
+import com.dumdumbich.sketchbook.githubclient.di.module.AppModule
 
 class App : Application() {
 
@@ -12,18 +13,16 @@ class App : Application() {
         lateinit var instance: App
     }
 
-    private val cicerone: Cicerone<Router> by lazy {
-        Cicerone.create()
-    }
-    val navigatorHolder get() = cicerone.getNavigatorHolder()
-
-    val router get() = cicerone.router
+    lateinit var appComponent: AppComponent
 
     override fun onCreate() {
         Log.d("GITHUB_CLIENT", "App(): onCreate()")
         super.onCreate()
         instance = this
         Database.create(this)
+        appComponent = DaggerAppComponent.builder()
+            .appModule(AppModule(this))
+            .build()
     }
 
     override fun onTerminate() {
