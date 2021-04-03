@@ -4,8 +4,10 @@ import android.content.Context
 import android.util.Log
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.dumdumbich.sketchbook.githubclient.data.db.room.dao.ICachedImageDao
 import com.dumdumbich.sketchbook.githubclient.data.db.room.dao.IRepositoryDao
 import com.dumdumbich.sketchbook.githubclient.data.db.room.dao.IUserDao
+import com.dumdumbich.sketchbook.githubclient.data.db.room.entity.CachedImageEntity
 import com.dumdumbich.sketchbook.githubclient.data.db.room.entity.GitHubRepositoryEntity
 import com.dumdumbich.sketchbook.githubclient.data.db.room.entity.GitHubUserEntity
 import java.lang.IllegalStateException
@@ -13,7 +15,8 @@ import java.lang.IllegalStateException
 @androidx.room.Database(
     entities = [
         GitHubUserEntity::class,
-        GitHubRepositoryEntity::class
+        GitHubRepositoryEntity::class,
+        CachedImageEntity::class
     ],
     version = 1
 )
@@ -21,6 +24,7 @@ abstract class Database : RoomDatabase() {
 
     abstract val userDao: IUserDao
     abstract val repositoryDao: IRepositoryDao
+    abstract val imageDao: ICachedImageDao
 
     companion object {
         private const val DB_NAME = "database.db"
