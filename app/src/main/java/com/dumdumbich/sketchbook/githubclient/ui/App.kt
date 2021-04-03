@@ -1,6 +1,7 @@
 package com.dumdumbich.sketchbook.githubclient.ui
 
 import android.app.Application
+import android.util.Log
 import com.dumdumbich.sketchbook.githubclient.data.db.room.Database
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Router
@@ -19,9 +20,15 @@ class App : Application() {
     val router get() = cicerone.router
 
     override fun onCreate() {
+        Log.d("GITHUB_CLIENT", "App(): onCreate()")
         super.onCreate()
         instance = this
         Database.create(this)
+    }
+
+    override fun onTerminate() {
+        Log.d("GITHUB_CLIENT", "App(): onTerminate()")
+        super.onTerminate()
     }
 
 }

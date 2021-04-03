@@ -1,6 +1,7 @@
 package com.dumdumbich.sketchbook.githubclient.ui.pages.repository
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.dumdumbich.sketchbook.githubclient.databinding.FragmentRepositoryBinding
@@ -22,7 +23,7 @@ class RepositoryFragment : MvpAppCompatFragment(), IRepositoryView, IBackClickLi
         }
     }
 
-    private var vb: FragmentRepositoryBinding? = null
+    private var ui: FragmentRepositoryBinding? = null
 
     private val presenter: RepositoryPresenter by moxyPresenter {
         val repository =
@@ -36,23 +37,30 @@ class RepositoryFragment : MvpAppCompatFragment(), IRepositoryView, IBackClickLi
         savedInstanceState: Bundle?
     ) =
         FragmentRepositoryBinding.inflate(inflater, container, false).also {
-            vb = it
+            ui = it
+            Log.d("GITHUB_CLIENT", "RepositoryFragment(): onCreateView()")
         }.root
 
     override fun init() {}
 
     override fun setId(text: String) {
-        vb?.tvId?.text = text
+        ui?.tvId?.text = text
     }
 
     override fun setTitle(text: String) {
-        vb?.tvTitle?.text = text
+        ui?.tvTitle?.text = text
     }
 
     override fun setForksCount(text: String) {
-        vb?.tvForksCount?.text = text
+        ui?.tvForksCount?.text = text
     }
 
     override fun isBackPressed() = presenter.backPressed()
+
+    override fun onDestroyView() {
+        Log.d("GITHUB_CLIENT", "RepositoryFragment(): onDestroyView()")
+        super.onDestroyView()
+        ui = null
+    }
 
 }

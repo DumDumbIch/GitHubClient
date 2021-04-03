@@ -1,5 +1,6 @@
 package com.dumdumbich.sketchbook.githubclient.ui.pages.repositories
 
+import android.util.Log
 import com.dumdumbich.sketchbook.githubclient.domain.entity.GitHubRepository
 import com.dumdumbich.sketchbook.githubclient.domain.entity.GitHubUser
 import com.dumdumbich.sketchbook.githubclient.domain.interactor.IGitHubRepositoriesInteractor
@@ -26,7 +27,7 @@ class RepositoriesPresenter(
 
         override fun bindView(view: IRepositoryItemView) {
             val repository = repositories[view.pos]
-            repository.name.let { view.setName(it) }
+            repository.name?.let { view.setName(it) }
         }
 
         override fun getCount() = repositories.size
@@ -36,25 +37,30 @@ class RepositoriesPresenter(
     val repositoriesListPresenter = RepositoriesListPresenter()
 
     override fun onFirstViewAttach() {
+        Log.d("GITHUB_CLIENT", "RepositoriesPresenter(): onFirstViewAttach()")
         super.onFirstViewAttach()
         viewState.init()
         loadData()
         repositoriesListPresenter.itemClickListener = { view ->
+            Log.d("GITHUB_CLIENT", "RepositoriesPresenter(): onFirstViewAttach() - usersListPresenter.itemClickListener")
             val repository = repositoriesListPresenter.repositories[view.pos]
             router.navigateTo(screens.repository(repository))
         }
     }
 
     private fun loadData() {
+        Log.d("GITHUB_CLIENT", "RepositoriesPresenter(): loadData()")
         val disposable = interactor.getRepositories(user)
             .observeOn(uiScheduler)
             .subscribe(
                 { repository ->
+                    Log.d("GITHUB_CLIENT", "RepositoriesPresenter(): loadData() - subscribe on users success")
                     repositoriesListPresenter.repositories.clear()
                     repositoriesListPresenter.repositories.addAll(repository)
                     viewState.updateList()
                 },
                 { error ->
+                    Log.d("GITHUB_CLIENT", "RepositoriesPresenter(): loadData() - subscribe on users error")
                     error.printStackTrace()
                 }
             )
@@ -62,6 +68,7 @@ class RepositoriesPresenter(
     }
 
     override fun onDestroy() {
+        Log.d("GITHUB_CLIENT", "RepositoriesPresenter(): onDestroy()")
         compositeDisposable.dispose()
         super.onDestroy()
     }
