@@ -1,8 +1,8 @@
 package com.dumdumbich.sketchbook.githubclient.data.repository
 
-import com.dumdumbich.sketchbook.githubclient.data.db.room.Database
-import com.dumdumbich.sketchbook.githubclient.data.db.room.entity.GitHubRepositoryEntity
-import com.dumdumbich.sketchbook.githubclient.data.network.github.api.IDataSource
+import android.util.Log
+import com.dumdumbich.sketchbook.githubclient.data.db.cache.IGitHubRepositoriesCache
+import com.dumdumbich.sketchbook.githubclient.data.network.api.github.retrofit.IGitHubAPI
 import com.dumdumbich.sketchbook.githubclient.data.network.service.INetworkStatus
 import com.dumdumbich.sketchbook.githubclient.domain.entity.GitHubRepository
 import com.dumdumbich.sketchbook.githubclient.domain.entity.GitHubUser
@@ -11,42 +11,27 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class GitHubRepositories(
-    private val api: IDataSource,
+    private val api: IGitHubAPI,
     private val networkStatus: INetworkStatus,
-    private val db: Database
+    private val cache: IGitHubRepositoriesCache
 ) : IGitHubRepositoriesInteractor {
 
     override fun getRepositories(user: GitHubUser): Single<List<GitHubRepository>> =
         networkStatus.isOnlineSingle().flatMap { isOnline ->
             if (isOnline) {
+                Log.d("GITHUB_CLIENT", "GitHubRepositories(): getRepositories() - Internet online")
                 user.reposUrl?.let { url ->
                     api.getRepositories(url)
                         .flatMap { repositories ->
-                            Single.fromCallable {
-                                val roomUser = db.userDao.findByLogin(user.login)
-                                    ?: throw RuntimeException("No user in DB")
-                                val roomRepos = repositories.map { repo ->
-                                    GitHubRepositoryEntity(
-                                        repo.id,
-                                        repo.name,
-                                        repo.forksCount,
-                                        roomUser.id
-                                    )
-                                }
-                                db.repositoryDao.insert(roomRepos)
-                                repositories
-                            }
+                            cache.putUserRepositories(user, repositories)
+                                .toSingleDefault(repositories)
                         }
-                } ?: Single.error(RuntimeException("User has no repos url"))
+                } ?: Single.error<List<GitHubRepository>>(RuntimeException("User has no repos url"))
+                    .subscribeOn(Schedulers.io())   // redundant ?!
             } else {
-                Single.fromCallable {
-                    val roomUser = db.userDao.findByLogin(user.login)
-                        ?: throw RuntimeException("No user in DB")
-                    db.repositoryDao.findForUser(roomUser.id).map { roomRepo ->
-                        GitHubRepository(roomRepo.id, roomRepo.name, roomRepo.forksCount)
-                    }
-                }
-            }
-        }.subscribeOn(Schedulers.io())
+                Log.d("GITHUB_CLIENT", "GitHubRepositories(): getRepositories() - Internet offline")
+                cache.getUserRepositories(user)
+            }.subscribeOn(Schedulers.io())
+        }
 
 }

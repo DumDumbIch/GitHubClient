@@ -1,6 +1,7 @@
 package com.dumdumbich.sketchbook.githubclient.ui.pages.user
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.dumdumbich.sketchbook.githubclient.databinding.FragmentUserBinding
@@ -38,9 +39,11 @@ class UserFragment : MvpAppCompatFragment(), IUserView,
         savedInstanceState: Bundle?
     ) = FragmentUserBinding.inflate(inflater, container, false).also {
         ui = it
+        Log.d("GITHUB_CLIENT", "UserFragment(): onCreateView()")
     }.root
 
     override fun onDestroyView() {
+        Log.d("GITHUB_CLIENT", "UserFragment(): onDestroyView()")
         super.onDestroyView()
         ui = null
     }

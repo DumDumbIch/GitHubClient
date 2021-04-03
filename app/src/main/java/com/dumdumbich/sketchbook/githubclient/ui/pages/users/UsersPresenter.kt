@@ -1,5 +1,6 @@
 package com.dumdumbich.sketchbook.githubclient.ui.pages.users
 
+import android.util.Log
 import com.dumdumbich.sketchbook.githubclient.domain.entity.GitHubUser
 import com.dumdumbich.sketchbook.githubclient.domain.interactor.IGitHubUsersInteractor
 import com.dumdumbich.sketchbook.githubclient.ui.navigator.IScreens
@@ -36,25 +37,30 @@ class UsersPresenter(
     val usersListPresenter = UsersListPresenter()
 
     override fun onFirstViewAttach() {
+        Log.d("GITHUB_CLIENT", "UsersPresenter(): onFirstViewAttach()")
         super.onFirstViewAttach()
         viewState.init()
         loadData()
         usersListPresenter.itemClickListener = { itemView ->
+            Log.d("GITHUB_CLIENT", "UsersPresenter(): onFirstViewAttach() - usersListPresenter.itemClickListener")
             val user = usersListPresenter.users[itemView.pos]
             router.navigateTo(screens.repositories(user))
         }
     }
 
     private fun loadData() {
+        Log.d("GITHUB_CLIENT", "UsersPresenter(): loadData()")
         usersListPresenter.users.clear()
         val disposable = interactor.getUsers()
             .observeOn(uiScheduler)
             .subscribe(
                 { user ->
+                    Log.d("GITHUB_CLIENT", "UsersPresenter(): loadData() - subscribe on users success")
                     usersListPresenter.users.addAll(user)
                     viewState.updateList()
                 },
                 { error ->
+                    Log.d("GITHUB_CLIENT", "UsersPresenter(): loadData() - subscribe on users error")
                     error.printStackTrace()
                 }
             )
@@ -67,6 +73,7 @@ class UsersPresenter(
     }
 
     override fun onDestroy() {
+        Log.d("GITHUB_CLIENT", "UsersPresenter(): onDestroy()")
         compositeDisposable.dispose()
         super.onDestroy()
     }

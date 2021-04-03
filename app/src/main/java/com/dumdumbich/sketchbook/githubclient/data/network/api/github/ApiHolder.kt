@@ -1,5 +1,6 @@
-package com.dumdumbich.sketchbook.githubclient.data.network.github.api
+package com.dumdumbich.sketchbook.githubclient.data.network.api.github
 
+import com.dumdumbich.sketchbook.githubclient.data.network.api.github.retrofit.IGitHubAPI
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -14,13 +15,13 @@ object ApiHolder {
         .excludeFieldsWithoutExposeAnnotation()
         .create()
 
-    val api: IDataSource by lazy {
+    val api: IGitHubAPI by lazy {
         Retrofit.Builder()
             .baseUrl("https://api.github.com/")
             .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
-            .create(IDataSource::class.java)
+            .create(IGitHubAPI::class.java)
     }
 
 }

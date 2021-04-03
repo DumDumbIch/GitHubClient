@@ -1,8 +1,8 @@
 package com.dumdumbich.sketchbook.githubclient.data.repository
 
-import com.dumdumbich.sketchbook.githubclient.data.db.room.Database
-import com.dumdumbich.sketchbook.githubclient.data.db.room.entity.GitHubUserEntity
-import com.dumdumbich.sketchbook.githubclient.data.network.github.api.IDataSource
+import android.util.Log
+import com.dumdumbich.sketchbook.githubclient.data.db.cache.IGitHubUsersCache
+import com.dumdumbich.sketchbook.githubclient.data.network.api.github.retrofit.IGitHubAPI
 import com.dumdumbich.sketchbook.githubclient.data.network.service.INetworkStatus
 import com.dumdumbich.sketchbook.githubclient.domain.entity.GitHubUser
 import com.dumdumbich.sketchbook.githubclient.domain.interactor.IGitHubUsersInteractor
@@ -10,35 +10,22 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class GitHubUsers(
-    private val api: IDataSource,
+    private val api: IGitHubAPI,
     private val networkStatus: INetworkStatus,
-    private val db: Database
+    private val cache: IGitHubUsersCache
 ) : IGitHubUsersInteractor {
 
     override fun getUsers(): Single<List<GitHubUser>> =
         networkStatus.isOnlineSingle().flatMap { isOnline ->
             if (isOnline) {
+                Log.d("GITHUB_CLIENT", "GitHubUsers(): getUsers() - Internet online")
                 api.getUsers()
                     .flatMap { users ->
-                        Single.fromCallable {
-                            val roomUsers = users.map { user ->
-                                GitHubUserEntity(user.id, user.login, user.avatarUrl, user.reposUrl)
-                            }
-                            db.userDao.insert(roomUsers)
-                            users
-                        }
+                        cache.putUsers(users).toSingleDefault(users)
                     }
             } else {
-                Single.fromCallable {
-                    db.userDao.getAll().map { roomUser ->
-                        GitHubUser(
-                            roomUser.id,
-                            roomUser.login,
-                            roomUser.avatarUrl,
-                            roomUser.reposUrl
-                        )
-                    }
-                }
+                Log.d("GITHUB_CLIENT", "GitHubUsers(): getUsers() - Internet offline")
+                cache.getUsers()
             }
         }.subscribeOn(Schedulers.io())
 
