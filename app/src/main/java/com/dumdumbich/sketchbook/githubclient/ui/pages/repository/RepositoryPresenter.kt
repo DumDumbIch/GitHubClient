@@ -4,9 +4,13 @@ import android.util.Log
 import com.dumdumbich.sketchbook.githubclient.domain.entity.GitHubRepository
 import com.github.terrakok.cicerone.Router
 import moxy.MvpPresenter
+import javax.inject.Inject
 
-class RepositoryPresenter(val router: Router, val repository: GitHubRepository) :
+class RepositoryPresenter(val repository: GitHubRepository) :
     MvpPresenter<IRepositoryView>() {
+
+    @Inject
+    lateinit var router: Router
 
     override fun onFirstViewAttach() {
         Log.d("GITHUB_CLIENT", "RepositoryPresenter(): onFirstViewAttach()")
@@ -26,4 +30,5 @@ class RepositoryPresenter(val router: Router, val repository: GitHubRepository) 
         Log.d("GITHUB_CLIENT", "RepositoryPresenter(): onDestroy()")
         super.onDestroy()
     }
+
 }

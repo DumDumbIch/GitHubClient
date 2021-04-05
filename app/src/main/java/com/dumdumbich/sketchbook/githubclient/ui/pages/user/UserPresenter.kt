@@ -4,10 +4,13 @@ import android.util.Log
 import com.dumdumbich.sketchbook.githubclient.domain.entity.GitHubUser
 import com.github.terrakok.cicerone.Router
 import moxy.MvpPresenter
+import javax.inject.Inject
 
-class UserPresenter(private val router: Router, private val user: GitHubUser) :
+class UserPresenter(private val user: GitHubUser) :
     MvpPresenter<IUserView>() {
 
+    @Inject
+    lateinit var router: Router
 
     override fun onFirstViewAttach() {
         Log.d("GITHUB_CLIENT", "UserPresenter(): onFirstViewAttach()")

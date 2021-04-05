@@ -6,18 +6,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dumdumbich.sketchbook.githubclient.data.db.room.Database
-import com.dumdumbich.sketchbook.githubclient.data.db.room.cache.GitHubUsersCache
 import com.dumdumbich.sketchbook.githubclient.data.db.room.cache.ImagesCache
-import com.dumdumbich.sketchbook.githubclient.data.network.api.github.ApiHolder
 import com.dumdumbich.sketchbook.githubclient.data.network.service.NetworkStatus
-import com.dumdumbich.sketchbook.githubclient.data.repository.GitHubUsers
+import com.dumdumbich.sketchbook.githubclient.data.resource.image.glide.ImageLoader
 import com.dumdumbich.sketchbook.githubclient.databinding.FragmentUsersBinding
 import com.dumdumbich.sketchbook.githubclient.ui.App
-import com.dumdumbich.sketchbook.githubclient.data.resource.image.glide.ImageLoader
-import com.dumdumbich.sketchbook.githubclient.ui.navigator.AndroidScreens
 import com.dumdumbich.sketchbook.githubclient.ui.navigator.IBackClickListener
 import com.dumdumbich.sketchbook.githubclient.ui.pages.users.list.UsersRVAdapter
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
@@ -28,16 +23,9 @@ class UsersFragment : MvpAppCompatFragment(), IUsersView, IBackClickListener {
     }
 
     private val presenter by moxyPresenter {
-        UsersPresenter(
-            GitHubUsers(
-                ApiHolder.api,
-                NetworkStatus(App.instance),
-                GitHubUsersCache(Database.getInstance())
-            ),
-            App.instance.router,
-            AndroidScreens(),
-            AndroidSchedulers.mainThread()
-        )
+        UsersPresenter().apply {
+            App.instance.appComponent.inject(this)
+        }
     }
 
     private var ui: FragmentUsersBinding? = null
@@ -61,16 +49,9 @@ class UsersFragment : MvpAppCompatFragment(), IUsersView, IBackClickListener {
     override fun init() {
         Log.d("GITHUB_CLIENT", "UsersFragment(): init()")
         ui?.rvUsers?.layoutManager = LinearLayoutManager(context)
-        adapter = UsersRVAdapter(
-            presenter.usersListPresenter,
-            ImageLoader(
-                ImagesCache(
-                    Database.getInstance(),
-                    App.instance.cacheDir
-                ),
-                NetworkStatus(requireContext())
-            )
-        )
+        adapter = UsersRVAdapter(presenter.usersListPresenter).apply {
+            App.instance.appComponent.inject(this)
+        }
         ui?.rvUsers?.adapter = adapter
     }
 

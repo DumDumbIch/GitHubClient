@@ -11,14 +11,25 @@ import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import moxy.MvpPresenter
+import javax.inject.Inject
+import javax.inject.Named
 
 class RepositoriesPresenter(
-    private val interactor: IGitHubRepositoriesInteractor,
-    private val router: Router,
-    private val screens: IScreens,
-    private val uiScheduler: Scheduler,
     private val user: GitHubUser
 ) : MvpPresenter<IRepositoriesView>() {
+
+    @field:Named("ui")
+    @Inject
+    lateinit var uiScheduler: Scheduler
+
+    @Inject
+    lateinit var interactor: IGitHubRepositoriesInteractor
+
+    @Inject
+    lateinit var router: Router
+
+    @Inject
+    lateinit var screens: IScreens
 
     class RepositoriesListPresenter : IRepositoriesListPresenter {
 
@@ -42,7 +53,10 @@ class RepositoriesPresenter(
         viewState.init()
         loadData()
         repositoriesListPresenter.itemClickListener = { view ->
-            Log.d("GITHUB_CLIENT", "RepositoriesPresenter(): onFirstViewAttach() - usersListPresenter.itemClickListener")
+            Log.d(
+                "GITHUB_CLIENT",
+                "RepositoriesPresenter(): onFirstViewAttach() - usersListPresenter.itemClickListener"
+            )
             val repository = repositoriesListPresenter.repositories[view.pos]
             router.navigateTo(screens.repository(repository))
         }
@@ -54,13 +68,19 @@ class RepositoriesPresenter(
             .observeOn(uiScheduler)
             .subscribe(
                 { repository ->
-                    Log.d("GITHUB_CLIENT", "RepositoriesPresenter(): loadData() - subscribe on users success")
+                    Log.d(
+                        "GITHUB_CLIENT",
+                        "RepositoriesPresenter(): loadData() - subscribe on users success"
+                    )
                     repositoriesListPresenter.repositories.clear()
                     repositoriesListPresenter.repositories.addAll(repository)
                     viewState.updateList()
                 },
                 { error ->
-                    Log.d("GITHUB_CLIENT", "RepositoriesPresenter(): loadData() - subscribe on users error")
+                    Log.d(
+                        "GITHUB_CLIENT",
+                        "RepositoriesPresenter(): loadData() - subscribe on users error"
+                    )
                     error.printStackTrace()
                 }
             )

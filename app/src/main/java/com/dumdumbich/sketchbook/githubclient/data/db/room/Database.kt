@@ -27,7 +27,7 @@ abstract class Database : RoomDatabase() {
     abstract val imageDao: ICachedImageDao
 
     companion object {
-        private const val DB_NAME = "database.db"
+        const val DB_NAME = "database.db"
         private var instance: Database? = null
 
         fun getInstance() = instance ?: throw IllegalStateException("Database has not been created")

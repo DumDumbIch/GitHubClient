@@ -10,13 +10,24 @@ import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import moxy.MvpPresenter
+import javax.inject.Inject
+import javax.inject.Named
 
-class UsersPresenter(
-    private val interactor: IGitHubUsersInteractor,
-    private val router: Router,
-    private val screens: IScreens,
-    private val uiScheduler: Scheduler
-) : MvpPresenter<IUsersView>() {
+class UsersPresenter() : MvpPresenter<IUsersView>() {
+
+    @field:Named("ui")
+    @Inject
+    lateinit var uiScheduler: Scheduler
+
+    @Inject
+    lateinit var interactor: IGitHubUsersInteractor
+
+    @Inject
+    lateinit var router: Router
+
+    @Inject
+    lateinit var screens: IScreens
+
 
     class UsersListPresenter : IUsersListPresenter {
 
@@ -42,7 +53,10 @@ class UsersPresenter(
         viewState.init()
         loadData()
         usersListPresenter.itemClickListener = { itemView ->
-            Log.d("GITHUB_CLIENT", "UsersPresenter(): onFirstViewAttach() - usersListPresenter.itemClickListener")
+            Log.d(
+                "GITHUB_CLIENT",
+                "UsersPresenter(): onFirstViewAttach() - usersListPresenter.itemClickListener"
+            )
             val user = usersListPresenter.users[itemView.pos]
             router.navigateTo(screens.repositories(user))
         }
@@ -55,12 +69,18 @@ class UsersPresenter(
             .observeOn(uiScheduler)
             .subscribe(
                 { user ->
-                    Log.d("GITHUB_CLIENT", "UsersPresenter(): loadData() - subscribe on users success")
+                    Log.d(
+                        "GITHUB_CLIENT",
+                        "UsersPresenter(): loadData() - subscribe on users success"
+                    )
                     usersListPresenter.users.addAll(user)
                     viewState.updateList()
                 },
                 { error ->
-                    Log.d("GITHUB_CLIENT", "UsersPresenter(): loadData() - subscribe on users error")
+                    Log.d(
+                        "GITHUB_CLIENT",
+                        "UsersPresenter(): loadData() - subscribe on users error"
+                    )
                     error.printStackTrace()
                 }
             )
